@@ -1,0 +1,24 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  # 采用注释的方式配置bean
+  context:
+    annotation-config: true
+    # 扫描包加载实现类
+    component-scan:
+      base-package: com.course.controller
+
+# 拦截器配置
+aop:
+  config:
+    pointcuts:
+      pointcut_test:
+        expression: "execution(* com.course.controller..*.*(..))"
+    advisors:
+      - pointcut-ref: pointcut_test
+        advice-ref: methodInvokeInterceptor
+
+# 定义拦截器bean
+beans:
+  methodInvokeInterceptor:
+    class: com.course.interceptor.ScoreMethodInterceptor

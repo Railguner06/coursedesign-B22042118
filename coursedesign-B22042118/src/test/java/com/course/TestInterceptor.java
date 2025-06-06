@@ -1,32 +1,24 @@
 package com.course;
 
-import com.course.controller.TestDesign;
-import com.course.pojo.PointObject;
-import com.course.utils.FileUtils;
-import com.course.utils.JsonUtils;
+import com.course.common.utils.FileUtils;
+import com.course.common.utils.JsonUtils;
+import com.course.controller.TestDesignController;
+import com.course.entity.bo.PointObject;
+import org.junit.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.Assert.assertEquals;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author lixuy
  * Created on 2019-04-10
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/*.xml"})
+@SpringBootTest
 public class TestInterceptor {
 	
 	@Autowired
-	TestDesign testDesign;
+    TestDesignController testDesign;
 	
     //检验当前积分情况
     private int assertScore(){

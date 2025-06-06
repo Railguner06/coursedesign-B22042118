@@ -1,14 +1,16 @@
 package com.course;
 
-import com.course.pojo.PointObject;
-import com.course.utils.FileUtils;
-import com.course.utils.JsonUtils;
+import com.course.entity.bo.PointObject;
+import com.course.common.utils.FileUtils;
+import com.course.common.utils.JsonUtils;
 import org.junit.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * @author lixuy
  * Created on 2019-04-10
  */
+@SpringBootTest
 public class TestFileIo {
 
     @Test
