@@ -16,10 +16,10 @@ import static org.junit.Assert.assertEquals;
  */
 @SpringBootTest
 public class TestInterceptor {
-	
-	@Autowired
+
+    @Autowired
     TestDesignController testDesign;
-	
+
     //检验当前积分情况
     private int assertScore(){
         try {
@@ -28,45 +28,45 @@ public class TestInterceptor {
             System.out.println("成长积分："+pointObject.getGrowScore());
             System.out.println("可交换积分："+pointObject.getExchangeScore());
             System.out.println("总积分："+pointObject.getScoreTotal());
-            
+
             return pointObject.getScoreTotal();
         }catch (Exception e){
             e.printStackTrace();
         }
-		return 0;        
+        return 0;
     }
-    
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         System.out.println("this is setUpBeforeClass...");
     }
- 
+
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         System.out.println("this is tearDownAfterClass...");
     }
- 
+
     @Before
     public void setUp() throws Exception {
         System.out.println("this is setUp...");
     }
- 
+
     @After
     public void tearDown() throws Exception {
         System.out.println("this is tearDown...");
     }
-    
+
     @Test
     public void testDesign() {
-    	try {
-    		int score1=assertScore();
-    		testDesign.testDesign();
-    		int score2=assertScore();
-    		
-    		assertEquals(1, score2-score1);
-    	}catch (Exception e) {
-			// TODO: handle exception
-		}
+        try {
+            int score1=assertScore();
+            testDesign.testDesign();
+            int score2=assertScore();
+
+            assertEquals(1, score2-score1);
+        }catch (Exception e) {
+            // TODO: handle exception
+        }
     }
-    
+
 }
