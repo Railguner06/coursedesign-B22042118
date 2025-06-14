@@ -5,16 +5,19 @@ import com.course.common.utils.JsonUtils;
 import com.course.controller.TestDesignController;
 import com.course.entity.bo.PointObject;
 import org.junit.*;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author lixuy
  * Created on 2019-04-10
  */
 @SpringBootTest
+@RunWith(SpringRunner.class)
 public class TestInterceptor {
 
     @Autowired
@@ -49,6 +52,14 @@ public class TestInterceptor {
     @Before
     public void setUp() throws Exception {
         System.out.println("this is setUp...");
+        // Initialize score file before each test
+        PointObject pointObject = new PointObject();
+        pointObject.setId(1);
+        pointObject.setGrowScore(0);
+        pointObject.setExchangeScore(0);
+        pointObject.setScoreTotal(0);
+        String json = JsonUtils.objectToJson(pointObject);
+        FileUtils.writeFile("score", json);
     }
 
     @After
@@ -59,14 +70,62 @@ public class TestInterceptor {
     @Test
     public void testDesign() {
         try {
-            int score1=assertScore();
+            assertNotNull("TestDesignController should not be null", testDesign);
+            
+            int score1 = assertScore();
+            assertEquals("Initial score should be 0", 0, score1);
+            
             testDesign.testDesign();
-            int score2=assertScore();
+            int score2 = assertScore();
 
-            assertEquals(1, score2-score1);
-        }catch (Exception e) {
-            // TODO: handle exception
+            assertEquals("TestDesign should add 1 point", 1, score2 - score1);
+            
+            // Test that grow score and total score are consistent
+            String file = FileUtils.readFile("score");
+            PointObject pointObject = JsonUtils.jsonToPojo(file, PointObject.class);
+            assertEquals("Grow score should equal total score", pointObject.getGrowScore(), pointObject.getScoreTotal());
+            
+        } catch (Exception e) {
+            fail("Test should not throw exception: " + e.getMessage());
         }
     }
 
+    @Test
+    public void testInterceptorMultipleCalls() {
+        try {
+            int initialScore = assertScore();
+            
+            // Call multiple times to test interceptor consistency
+            for (int i = 1; i <= 3; i++) {
+                testDesign.testDesign();
+                int currentScore = assertScore();
+                assertEquals("After " + i + " calls, score should be " + i, i, currentScore - initialScore);
+            }
+            
+        } catch (Exception e) {
+            fail("Multiple calls test should not throw exception: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testScoreObjectIntegrity() {
+        try {
+            testDesign.testDesign();
+            
+            String file = FileUtils.readFile("score");
+            PointObject pointObject = JsonUtils.jsonToPojo(file, PointObject.class);
+            
+            assertNotNull("PointObject should not be null after operation", pointObject);
+            assertNotNull("GrowScore should not be null", pointObject.getGrowScore());
+            assertNotNull("ExchangeScore should not be null", pointObject.getExchangeScore());
+            assertNotNull("ScoreTotal should not be null", pointObject.getScoreTotal());
+            
+            assertTrue("GrowScore should be positive", pointObject.getGrowScore() > 0);
+            assertEquals("ExchangeScore should be 0 for TestDesign", 0, pointObject.getExchangeScore().intValue());
+            assertEquals("ScoreTotal should equal GrowScore", pointObject.getGrowScore(), pointObject.getScoreTotal());
+            
+        } catch (Exception e) {
+            fail("Score object integrity test should not throw exception: " + e.getMessage());
+        }
+    }
 }
